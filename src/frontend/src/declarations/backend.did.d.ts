@@ -105,6 +105,8 @@ export interface _SERVICE {
   'addEvidenceRecord' : ActorMethod<[EvidenceRecord], undefined>,
   'addMissingPerson' : ActorMethod<[MissingPerson], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
+  'deleteCriminalProfile' : ActorMethod<[string], undefined>,
+  'deleteMissingPerson' : ActorMethod<[string], undefined>,
   'getAllCriminalProfiles' : ActorMethod<[], Array<CriminalProfile>>,
   'getAllDetectionLogs' : ActorMethod<[], Array<DetectionLog>>,
   'getAllEvidenceRecords' : ActorMethod<[], Array<EvidenceRecord>>,

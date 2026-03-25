@@ -109,7 +109,6 @@ actor {
   };
 
   // Helper: any logged-in (non-anonymous) principal is authorized.
-  // We do NOT call getUserRole because it traps for unregistered principals.
   func isAuthorized(caller : Principal) : Bool {
     not caller.isAnonymous();
   };
@@ -151,6 +150,13 @@ actor {
     criminals.add(profile.id, profile);
   };
 
+  public shared ({ caller }) func deleteCriminalProfile(id : Text) : async () {
+    if (not isAuthorized(caller)) {
+      Runtime.trap("Unauthorized: Must be logged in to delete criminal profiles");
+    };
+    criminals.remove(id);
+  };
+
   public query ({ caller }) func getCriminalProfile(id : Text) : async ?CriminalProfile {
     if (not isAuthorized(caller)) {
       Runtime.trap("Unauthorized");
@@ -178,6 +184,13 @@ actor {
       Runtime.trap("Unauthorized: Must be logged in to update missing persons");
     };
     missingPersons.add(person.id, person);
+  };
+
+  public shared ({ caller }) func deleteMissingPerson(id : Text) : async () {
+    if (not isAuthorized(caller)) {
+      Runtime.trap("Unauthorized: Must be logged in to delete missing persons");
+    };
+    missingPersons.remove(id);
   };
 
   public query ({ caller }) func getMissingPerson(id : Text) : async ?MissingPerson {
@@ -240,7 +253,6 @@ actor {
     let totalCriminals = criminals.size();
     let missingPersonsCount = missingPersons.size();
 
-    // Calculate active alerts (high/critical threat detections in last 24 hours)
     let now = Time.now();
     let oneDayNanos : Int = 24 * 60 * 60 * 1_000_000_000;
     let yesterday = now - oneDayNanos;

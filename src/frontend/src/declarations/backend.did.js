@@ -121,6 +121,8 @@ export const idlService = IDL.Service({
   'addEvidenceRecord' : IDL.Func([EvidenceRecord], [], []),
   'addMissingPerson' : IDL.Func([MissingPerson], [], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+  'deleteCriminalProfile' : IDL.Func([IDL.Text], [], []),
+  'deleteMissingPerson' : IDL.Func([IDL.Text], [], []),
   'getAllCriminalProfiles' : IDL.Func(
       [],
       [IDL.Vec(CriminalProfile)],
@@ -274,6 +276,8 @@ export const idlFactory = ({ IDL }) => {
     'addEvidenceRecord' : IDL.Func([EvidenceRecord], [], []),
     'addMissingPerson' : IDL.Func([MissingPerson], [], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+    'deleteCriminalProfile' : IDL.Func([IDL.Text], [], []),
+    'deleteMissingPerson' : IDL.Func([IDL.Text], [], []),
     'getAllCriminalProfiles' : IDL.Func(
         [],
         [IDL.Vec(CriminalProfile)],

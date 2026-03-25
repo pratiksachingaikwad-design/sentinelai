@@ -63,23 +63,15 @@ export const useCamera = (config: CameraConfig = {}) => {
   }, []);
 
   const createMediaStream = useCallback(
-    async (facing: "user" | "environment", deviceId?: string) => {
+    async (facing: "user" | "environment") => {
       try {
-        const constraints = deviceId
-          ? {
-              video: {
-                deviceId: { exact: deviceId },
-                width: { ideal: width },
-                height: { ideal: height },
-              },
-            }
-          : {
-              video: {
-                facingMode: facing,
-                width: { ideal: width },
-                height: { ideal: height },
-              },
-            };
+        const constraints = {
+          video: {
+            facingMode: facing,
+            width: { ideal: width },
+            height: { ideal: height },
+          },
+        };
 
         const stream = await navigator.mediaDevices.getUserMedia(constraints);
 
@@ -196,29 +188,57 @@ export const useCamera = (config: CameraConfig = {}) => {
 
   const startCameraWithDevice = useCallback(
     async (deviceId: string): Promise<boolean> => {
+      if (isSupported === false || isLoading) {
+        return false;
+      }
+
       setIsLoading(true);
       setError(null);
+
       try {
         cleanup();
-        const stream = await createMediaStream(currentFacingMode, deviceId);
-        if (!stream) return false;
+
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            deviceId: { exact: deviceId },
+            width: { ideal: width },
+            height: { ideal: height },
+          },
+        });
+
+        if (!isMountedRef.current) {
+          for (const track of stream.getTracks()) {
+            track.stop();
+          }
+          return false;
+        }
+
         streamRef.current = stream;
         const success = await setupVideo(stream);
+
         if (success && isMountedRef.current) {
           setIsActive(true);
           return true;
         }
+
         cleanup();
         return false;
       } catch (err: any) {
-        if (isMountedRef.current) setError(err);
+        if (isMountedRef.current) {
+          setError({
+            type: "unknown",
+            message: err.message || "Failed to access camera",
+          });
+        }
         cleanup();
         return false;
       } finally {
-        if (isMountedRef.current) setIsLoading(false);
+        if (isMountedRef.current) {
+          setIsLoading(false);
+        }
       }
     },
-    [currentFacingMode, cleanup, createMediaStream, setupVideo],
+    [isSupported, isLoading, width, height, cleanup, setupVideo],
   );
 
   const stopCamera = useCallback(async (): Promise<void> => {

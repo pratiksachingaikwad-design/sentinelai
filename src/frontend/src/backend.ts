@@ -198,6 +198,8 @@ export interface backendInterface {
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
     updateCriminalProfile(profile: CriminalProfile): Promise<void>;
     updateMissingPerson(person: MissingPerson): Promise<void>;
+    deleteCriminalProfile(id: string): Promise<void>;
+    deleteMissingPerson(id: string): Promise<void>;
 }
 import type { CriminalProfile as _CriminalProfile, DetectionLog as _DetectionLog, DetectionType as _DetectionType, EvidenceRecord as _EvidenceRecord, MissingPerson as _MissingPerson, ThreatLevel as _ThreatLevel, Timestamp as _Timestamp, UserProfile as _UserProfile, UserRole as _UserRole, _CaffeineStorageRefillInformation as __CaffeineStorageRefillInformation, _CaffeineStorageRefillResult as __CaffeineStorageRefillResult } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
@@ -563,6 +565,34 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.updateCriminalProfile(to_candid_CriminalProfile_n8(this._uploadFile, this._downloadFile, arg0));
+            return result;
+        }
+    }
+    async deleteCriminalProfile(arg0: string): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.deleteCriminalProfile(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.deleteCriminalProfile(arg0);
+            return result;
+        }
+    }
+    async deleteMissingPerson(arg0: string): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.deleteMissingPerson(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.deleteMissingPerson(arg0);
             return result;
         }
     }
